@@ -1,0 +1,37 @@
+<!--This launch file is for a single turtlebot spawning a radiation sensor-->
+<launch>
+  
+
+<!--Load params -->
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/attentuation.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/sensors.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/radiation.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/configs/sources.yaml" command="load"  />
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find gazebo_radiation_plugins)/custom_models/reactor_room/updated_reactor_room2.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>  
+
+    <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
+      <param name="publish_frequency" type="double" value="50.0" />
+    </node>
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model waffle -x 20 -y 5 -z 0 -Y 0 -param robot_description" />
+
+ <node pkg="tf" type="static_transform_publisher" name="radiation_sensor" args="0 0 0 0 0 0  /base_footprint sim_sensor 100"/>
+ <node pkg="tf" type="static_transform_publisher" name="tf_map_odom" args="0 0 0 0 0 0  /map odom 100"/>
+
+ <include file="$(find gazebo_radiation_plugins)/launch/radmap.launch" /> 
+ 
+  
+ 
+
+
+</launch>
