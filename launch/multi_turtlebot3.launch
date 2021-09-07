@@ -20,14 +20,17 @@
   <arg name="third_tb3_z_pos" default=" 0.0"/>
   <arg name="third_tb3_yaw"   default=" 1.57"/>
 
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find gazebo_radiation_plugins)/custom_models/reactor_room/updated_reactor_room2.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
-  </include>  
+  <arg name="paused" value="false"/>
+  <arg name="gui" value="true"/>
+  <arg name="headless" value="false"/>
+  <arg name="debug" value="false"/>
+  <arg name="world_name" default="$(find gazebo_radiation_plugins)/custom_models/reactor_room/updated_reactor_room2.world" />
+
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/attentuation.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/sensors.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/radiation.yaml" command="load"  />
+
+  <node name="gazebo" pkg="gazebo_radiation_plugins" type="gazebo"  output="screen" args="--verbose $(arg world_name)" />
 
   <group ns = "$(arg first_tb3)">
     <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
@@ -36,10 +39,10 @@
       <param name="publish_frequency" type="double" value="50.0" />
       <param name="tf_prefix" value="$(arg first_tb3)" />
     </node>
-
-     <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_0" name="robot_0_tf_broadcaster" />
-     <node pkg="nuclearrobot" type="leader_vel_pub" name="leader" />
-     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg first_tb3) -x $(arg first_tb3_x_pos) -y $(arg first_tb3_y_pos) -z $(arg first_tb3_z_pos) -Y $(arg first_tb3_yaw) -param robot_description" />
+ 
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg first_tb3) -x $(arg first_tb3_x_pos) -y $(arg first_tb3_y_pos) -z $(arg first_tb3_z_pos) -Y $(arg first_tb3_yaw) -param robot_description" />
+    <node pkg="tf" type="static_transform_publisher" name="sim_sensor_to_robot" args="0 0 0 0 0 0  /tb3_0/base_footprint sim_sensor 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_0/odom 100"/>
   
   </group>
 
@@ -51,10 +54,10 @@
       <param name="tf_prefix" value="$(arg second_tb3)" />
     </node>
 
-    <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_1" name="robot_1_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener1" name="follower1" />
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg second_tb3) -x $(arg second_tb3_x_pos) -y $(arg second_tb3_y_pos) -z $(arg second_tb3_z_pos) -Y $(arg second_tb3_yaw) -param robot_description" />
-  
+    <node pkg="tf" type="static_transform_publisher" name="sim_sensor_to_robot" args="0 0 0 0 0 0  /tb3_1/base_footprint sim_sensor 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_1/odom 100"/>
+
   </group>
 
   <group ns = "$(arg third_tb3)">
@@ -65,9 +68,9 @@
       <param name="tf_prefix" value="$(arg third_tb3)" />
     </node>
 
-    <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_2" name="robot_2_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener2" name="follower2" />
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg third_tb3) -x $(arg third_tb3_x_pos) -y $(arg third_tb3_y_pos) -z $(arg third_tb3_z_pos) -Y $(arg third_tb3_yaw) -param robot_description" />
+    <node pkg="tf" type="static_transform_publisher" name="sim_sensor_to_robot" args="0 0 0 0 0 0  /tb3_2/base_footprint sim_sensor 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_2/odom 100"/>
 
   </group>
 
