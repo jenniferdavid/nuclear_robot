@@ -1,4 +1,5 @@
-<!--In this launchfile, three turtlebots are spawned in gazebo and they move in a formation-->
+<!--In this launchfile, three turtlebots are spawned in gazebo nuclear plant world. They also spawn multiple radiation sources and radiation sensors loaded on them-->
+
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
   <arg name="first_tb3"  default="tb3_0"/>
@@ -20,15 +21,22 @@
   <arg name="third_tb3_z_pos" default=" 0.0"/>
   <arg name="third_tb3_yaw"   default=" 1.57"/>
 
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find gazebo_radiation_plugins)/custom_models/reactor_room/updated_reactor_room2.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
-  </include>  
+  <arg name="use_sim_time" default="true" />
+  <arg name="gui" default="true" />
+  <arg name="headless" default="false" />
+  <arg name="world_name" default="$(find gazebo_radiation_plugins)/custom_models/reactor_room/updated_reactor_room2.world" />
 
+  <param name="use_sim_time" value="$(arg use_sim_time)"/>
+
+    <!--Load params -->
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/attentuation.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/sensors.yaml" command="load"  />
+  <rosparam file="$(find gazebo_radiation_plugins)/custom_models/reactor_room/configs/radiation.yaml" command="load"  />
+
+  <!-- Launch Gazebo with the specified world and radiation sources-->
+  <node name="gazebo" pkg="gazebo_radiation_plugins" type="gazebo"  output="screen" args="--verbose $(arg world_name)" />
+
+  <!-- Spawn first robot with radiation sensor-->
   <group ns = "$(arg first_tb3)">
     <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
 
@@ -37,12 +45,15 @@
       <param name="tf_prefix" value="$(arg first_tb3)" />
     </node>
 
-     <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_0" name="robot_0_tf_broadcaster" />
-     <node pkg="nuclearrobot" type="leader_vel_pub" name="leader" />
-     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg first_tb3) -x $(arg first_tb3_x_pos) -y $(arg first_tb3_y_pos) -z $(arg first_tb3_z_pos) -Y $(arg first_tb3_yaw) -param robot_description" />
-  
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg first_tb3) -x $(arg first_tb3_x_pos) -y $(arg first_tb3_y_pos) -z $(arg first_tb3_z_pos) -Y $(arg first_tb3_yaw) -param robot_description" />
+    <!-- Turtlebot xacro modified to add the sensor and corresponding tf-->
+     <node pkg="tf" type="static_transform_publisher" name="radiation_sensor_to_robot0" args="0 0 0 0 0 0  /tb3_0/base_footprint sim_sensor 100"/>
+     <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_0/odom 100"/>
+ 
+
   </group>
 
+  <!-- Spawn second robot with radiation sensor-->
   <group ns = "$(arg second_tb3)">
     <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
 
@@ -51,12 +62,14 @@
       <param name="tf_prefix" value="$(arg second_tb3)" />
     </node>
 
-    <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_1" name="robot_1_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener1" name="follower1" />
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg second_tb3) -x $(arg second_tb3_x_pos) -y $(arg second_tb3_y_pos) -z $(arg second_tb3_z_pos) -Y $(arg second_tb3_yaw) -param robot_description" />
-  
+    <!-- Turtlebot xacro modified to add the sensor and corresponding tf-->
+    <node pkg="tf" type="static_transform_publisher" name="radiation_sensor_to_robot1" args="0 0 0 0 0 0  /tb3_1/base_footprint sim_sensor 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_1/odom 100"/>
+ 
   </group>
 
+  <!-- Spawn third robot with radiation sensor-->
   <group ns = "$(arg third_tb3)">
     <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
 
@@ -65,10 +78,11 @@
       <param name="tf_prefix" value="$(arg third_tb3)" />
     </node>
 
-    <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_2" name="robot_2_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener2" name="follower2" />
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg third_tb3) -x $(arg third_tb3_x_pos) -y $(arg third_tb3_y_pos) -z $(arg third_tb3_z_pos) -Y $(arg third_tb3_yaw) -param robot_description" />
-
+    <!-- Turtlebot xacro modified to add the sensor and corresponding tf-->
+    <node pkg="tf" type="static_transform_publisher" name="radiation_sensor_to_robot2" args="0 0 0 0 0 0  /tb3_2/base_footprint sim_sensor 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_2/odom 100"/>
+ 
   </group>
 
 </launch>
