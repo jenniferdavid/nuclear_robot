@@ -65,7 +65,7 @@
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg second_tb3) -x $(arg second_tb3_x_pos) -y $(arg second_tb3_y_pos) -z $(arg second_tb3_z_pos) -Y $(arg second_tb3_yaw) -param robot_description" />
     <!-- Turtlebot xacro modified to add the sensor and corresponding tf-->
     <node pkg="tf" type="static_transform_publisher" name="radiation_sensor_to_robot1" args="0 0 0 0 0 0  /tb3_1/base_footprint sim_sensor 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_1/odom 100"/>
+    <!--node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_1/odom 100"/-->
  
   </group>
 
@@ -81,7 +81,7 @@
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg third_tb3) -x $(arg third_tb3_x_pos) -y $(arg third_tb3_y_pos) -z $(arg third_tb3_z_pos) -Y $(arg third_tb3_yaw) -param robot_description" />
     <!-- Turtlebot xacro modified to add the sensor and corresponding tf-->
     <node pkg="tf" type="static_transform_publisher" name="radiation_sensor_to_robot2" args="0 0 0 0 0 0  /tb3_2/base_footprint sim_sensor 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_2/odom 100"/>
+    <!--node pkg="tf" type="static_transform_publisher" name="tfmapodom" args="0 0 0 0 0 0 /map tb3_2/odom 100"/-->
  
   </group>
 

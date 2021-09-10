@@ -137,11 +137,11 @@ target_link_libraries(leader_vel_pub ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
 add_executable(tb3_tf_broadcaster src/tb3_tf_broadcaster.cpp)
 target_link_libraries(tb3_tf_broadcaster ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
 
-add_executable(tb3_tf_listener1 src/tb3_tf_listener1.cpp)
-target_link_libraries(tb3_tf_listener1 ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
+add_executable(tb3_tf_listener src/tb3_tf_listener.cpp)
+target_link_libraries(tb3_tf_listener ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
 
-add_executable(tb3_tf_listener2 src/tb3_tf_listener2.cpp)
-target_link_libraries(tb3_tf_listener2 ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
+#add_executable(tb3_tf_listener2 src/tb3_tf_listener2.cpp)
+#target_link_libraries(tb3_tf_listener2 ${catkin_LIBRARIES}${GAZEBO_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

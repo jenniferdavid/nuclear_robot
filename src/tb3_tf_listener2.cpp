@@ -32,20 +32,8 @@ int main(int argc, char** argv)
 		tf::StampedTransform transform21;
 		try
 		{
-		        listener.waitForTransform("/tb3_2", "/tb3_1", ros::Time(0), ros::Duration(3.0));
-			listener.lookupTransform("/tb3_2", "/tb3_1", ros::Time(0), transform12);
-			
-		}
-		catch (tf::TransformException &ex) 
-		{
-			ROS_ERROR("%s",ex.what());
-			ros::Duration(1.0).sleep();
-			continue;
-		}
-		try
-		{
-		        listener.waitForTransform("/tb3_1", "/tb3_2", ros::Time(0), ros::Duration(3.0));
-			listener.lookupTransform("/tb3_1", "/tb3_2", ros::Time(0), transform21);
+		        listener.waitForTransform("/tb3_0", "/tb3_2", ros::Time(0), ros::Duration(3.0));
+			listener.lookupTransform("/tb3_0", "/tb3_2", ros::Time(0), transform12);
 			
 		}
 		catch (tf::TransformException &ex) 
@@ -57,10 +45,8 @@ int main(int argc, char** argv)
 
 		// 根据tb3_1与tb3_2坐标系之间的位置关系，发布turtle3的速度控制指令calculate the speed of follower2
 		geometry_msgs::Twist vel_msg;
-		vel_msg.angular.z = 4.0 * atan2(transform12.getOrigin().y(),
-				                        transform12.getOrigin().x());
-		vel_msg.linear.x = 0.5 * sqrt(pow(transform12.getOrigin().x(), 2) +
-				                      pow(transform12.getOrigin().y(), 2));
+		vel_msg.angular.z = 4.0 * atan2(transform12.getOrigin().y(),transform12.getOrigin().x());
+		vel_msg.linear.x = 0.5 * sqrt(pow(transform12.getOrigin().x(), 2) + pow(transform12.getOrigin().y(), 2));
 		tb3_2_vel.publish(vel_msg);
 
 		rate.sleep();

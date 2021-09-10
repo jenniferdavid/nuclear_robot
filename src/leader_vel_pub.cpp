@@ -25,8 +25,7 @@ int main(int argc, char **argv)
 
         // 发布消息 publish
         tb3_0_vel_pub.publish(vel_msg);
-        ROS_INFO("Publsh turtle velocity command[%0.2f m/s, %0.2f rad/s]", 
-                vel_msg.linear.x, vel_msg.angular.z);
+        ROS_INFO("Publsh turtle velocity command[%0.2f m/s, %0.2f rad/s]", vel_msg.linear.x, vel_msg.angular.z);
 
         // 按照循环频率延时
         loop_rate.sleep();

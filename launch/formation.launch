@@ -1,29 +1,16 @@
 <!--In this launchfile, three turtlebots are spawned in gazebo and they move in a formation-->
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="first_tb3"  default="tb3_0"/>
-  <arg name="second_tb3" default="tb3_1"/>
-  <arg name="third_tb3"  default="tb3_2"/>
 
 <!-- Rviz -->
-  <node name="rviz" pkg="rviz" type="rviz"  args="-d $(find turtlebot3_gazebo)/rviz/multi_turtlebot3_slam.rviz"/>
+ <node name="rviz" pkg="rviz" type="rviz"  args="-d $(find turtlebot3_gazebo)/rviz/multi_turtlebot3_slam.rviz"/>
 
 <!-- First robot becomes leader and publishes corresponding velocities-->
-  <group ns = "$(arg first_tb3)">
-   <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_0" name="robot_0_tf_broadcaster" />
-     <node pkg="nuclearrobot" type="leader_vel_pub" name="leader" /> 
-  </group>
+ <node pkg="nuclearrobot" type="tb3_tf_broadcaster" name="robot_broadcaster" />
 
-<!-- Second robot becomes follower-->
-  <group ns = "$(arg second_tb3)">
-  <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_1" name="robot_1_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener1" name="follower1" />  
-  </group>
-
-<!-- Third robot becomes follower-->
-  <group ns = "$(arg third_tb3)">
-      <node pkg="nuclearrobot" type="tb3_tf_broadcaster" args="/tb3_2" name="robot_2_tf_broadcaster" />
-    <node pkg="nuclearrobot" type="tb3_tf_listener2" name="follower2" />
-  </group>
+ <node pkg="nuclearrobot" type="leader_vel_pub" name="leader" /> 
+ 
+ <node pkg="nuclearrobot" type="tb3_tf_listener" name="follower" />  
 
 </launch>
+
